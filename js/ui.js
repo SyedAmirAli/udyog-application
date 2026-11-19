@@ -72,6 +72,15 @@
           ${sLogo('vv', 'size-5 rounded-md')}<span>স্পনসর: <b class="font-semibold text-ink">Vimverse Lab</b></span>
         </a>
       </div>`;
+    if (kind === 'badge') return `
+      <div class="no-print flex flex-wrap items-center gap-2 text-sm">
+        <a ${sAttrs('vv', place)} class="inline-flex items-center gap-2 rounded-full border border-line bg-white/80 py-1 pr-3 pl-1 text-muted shadow-sm backdrop-blur hover:border-brand-300 hover:text-ink">
+          ${sLogo('vv', 'size-6 rounded-full')}<span>স্পনসর: <b class="font-semibold text-ink">Vimverse Lab</b></span>
+        </a>
+        <a ${sAttrs('ov', place)} class="inline-flex items-center gap-2 rounded-full border border-partner-500/30 bg-partner-50/80 py-1 pr-3 pl-1 text-muted shadow-sm backdrop-blur hover:border-partner-500/60 hover:text-ink">
+          ${sLogo('ov', 'size-6 rounded-full p-0.5')}<span>কেনাকাটা: <b class="font-semibold text-partner-600">Our Vimganj</b></span><i data-lucide="arrow-up-right" class="size-3.5"></i>
+        </a>
+      </div>`;
     if (kind === 'sponsor') return `
       <a ${sAttrs('vv', place)} class="no-print group flex flex-col gap-4 rounded-card border border-line bg-brand-900 p-5 text-white shadow-card transition hover:bg-brand-800 sm:flex-row sm:items-center sm:p-6">
         <div class="flex items-center gap-3.5 sm:contents">

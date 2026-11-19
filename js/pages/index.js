@@ -3,6 +3,7 @@
 document.getElementById('hdr').outerHTML = UI.header('home');
     document.getElementById('ftr').outerHTML = UI.footer('home');
     document.getElementById('partners').innerHTML = UI.promo('shop', 'home-banner') + UI.promo('sponsor', 'home-sponsor');
+    document.getElementById('hero-sponsor').innerHTML = UI.promo('badge', 'home-hero');
     const S = Schema;
 
     // deadline countdown
@@ -47,7 +48,7 @@ document.getElementById('hdr').outerHTML = UI.header('home');
     window.addEventListener('load', () => {
       const host = document.getElementById('hero-page');
       if (!window.FORM_PAGES) return;
-      host.innerHTML = `<div style="position:absolute;left:0;top:0;width:595.32pt;transform-origin:0 0" id="hero-inner"><link rel="stylesheet" href="assets/form/form-fonts.css?v=202611191656"><link rel="stylesheet" href="css/form-print.css?v=202611191656"><section class="form-page">${FORM_PAGES[0]}<img class="form-logo" src="assets/logo.png" style="left:36pt;top:27.7pt;width:59.2pt;height:64.8pt"></section></div>`;
+      host.innerHTML = `<div style="position:absolute;left:0;top:0;width:595.32pt;transform-origin:0 0" id="hero-inner"><link rel="stylesheet" href="assets/form/form-fonts.css?v=202611191657"><link rel="stylesheet" href="css/form-print.css?v=202611191657"><section class="form-page">${FORM_PAGES[0]}<img class="form-logo" src="assets/logo.png" style="left:36pt;top:27.7pt;width:59.2pt;height:64.8pt"></section></div>`;
       const fit = () => { const inner = document.getElementById('hero-inner'); inner.style.transform = `scale(${host.clientWidth / inner.offsetWidth})`; };
       fit(); window.addEventListener('resize', fit);
     });
