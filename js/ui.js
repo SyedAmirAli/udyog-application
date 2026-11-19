@@ -28,6 +28,81 @@
     </header>`;
   }
 
+  // ---------- sponsor & partner promotion ----------
+  // Vimverse Lab sponsors this app; Our Vimganj is its marketplace. Links carry UTM tags
+  // (utm_campaign = where on the page it was clicked) so visits can be tracked.
+  const SPONSOR = {
+    vv: { name: 'Vimverse Lab', url: 'https://www.vimverselab.com/', logo: 'https://www.vimverselab.com/apple-touch-icon.png' },
+    ov: { name: 'Our Vimganj', url: 'https://ourvimganj.com/', logo: 'https://ourvimganj.com/icon.png' },
+  };
+  const sLink = (k, place) => `${SPONSOR[k].url}?utm_source=udyog-app&utm_medium=referral&utm_campaign=${encodeURIComponent(place)}`;
+  const sAttrs = (k, place) => `href="${sLink(k, place)}" target="_blank" rel="noopener sponsored"`;
+  const sLogo = (k, cls) => `<img src="${SPONSOR[k].logo}" alt="${SPONSOR[k].name}" class="${cls} shrink-0 rounded-xl bg-white object-contain" loading="lazy" width="40" height="40">`;
+
+  // kinds: 'shop' (full Our Vimganj banner), 'shop-tip' (inline tip for the expense step),
+  //        'side' (compact card for sidebar/drawer), 'sponsor' (Vimverse Lab card)
+  function promo(kind, place) {
+    if (kind === 'shop') return `
+      <a ${sAttrs('ov', place)} class="no-print group relative flex flex-col gap-4 overflow-hidden rounded-card border border-partner-500/25 bg-gradient-to-br from-partner-50 via-white to-sun-400/10 p-5 shadow-card transition hover:border-partner-500/50 hover:shadow-lg sm:flex-row sm:items-center sm:p-6">
+        <span class="absolute -top-10 -right-10 size-40 rounded-full bg-partner-500/10 blur-2xl"></span>
+        <div class="flex items-center gap-3.5 sm:contents">
+          ${sLogo('ov', 'size-14 p-1.5 ring-1 ring-partner-500/20')}
+          <div class="min-w-0 flex-1">
+            <span class="chip bg-partner-500/10 text-partner-600"><i data-lucide="shopping-bag" class="size-3.5"></i>পার্টনার মার্কেটপ্লেস</span>
+            <h3 class="mt-1.5 text-lg font-bold leading-snug text-ink">ব্যবসা শুরুর সব কেনাকাটা এক জায়গায় — <span class="text-partner-600">Our Vimganj</span></h3>
+            <p class="mt-1 text-[15px] leading-relaxed text-muted">ইলেকট্রনিক্স, DIY কিট ও যন্ত্রপাতি, জেনারেটর ভাড়া, বাস টিকিট, পার্সেল — স্থানীয় বিক্রেতাদের কাছ থেকে, ঘরে বসেই।</p>
+          </div>
+        </div>
+        <span class="btn h-11 shrink-0 bg-partner-500 px-5 text-white shadow-sm shadow-partner-600/30 group-hover:bg-partner-600 max-sm:w-full">ভিজিট করুন<i data-lucide="arrow-up-right"></i></span>
+      </a>`;
+    if (kind === 'shop-tip') return `
+      <a ${sAttrs('ov', place)} class="no-print group flex items-center gap-3 rounded-2xl border border-partner-500/25 bg-partner-50/70 p-3.5 transition hover:border-partner-500/50">
+        ${sLogo('ov', 'size-10 p-1')}
+        <span class="min-w-0 flex-1 text-sm leading-snug"><b class="text-ink">যন্ত্রপাতি ও কাঁচামাল কোথায় কিনবেন?</b><span class="block text-muted">Our Vimganj-এ স্থানীয় দামে দেখে নিন, বাজেট ঠিক করতে সুবিধা হবে।</span></span>
+        <i data-lucide="arrow-up-right" class="size-4.5 shrink-0 text-partner-600 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
+      </a>`;
+    if (kind === 'side') return `
+      <div class="no-print overflow-hidden rounded-card border border-line bg-white">
+        <a ${sAttrs('ov', place)} class="group flex items-center gap-3 p-3.5 hover:bg-partner-50/60">
+          ${sLogo('ov', 'size-10 p-1')}
+          <span class="min-w-0 flex-1 leading-tight"><span class="block text-sm font-bold">Our Vimganj</span><span class="block text-xs text-muted">কেনাকাটা, টিকিট ও সার্ভিস এক জায়গায়</span></span>
+          <i data-lucide="arrow-up-right" class="size-4 text-partner-600"></i>
+        </a>
+        <a ${sAttrs('vv', place)} class="flex items-center gap-2 border-t border-line bg-canvas/60 px-3.5 py-2 text-xs text-muted hover:text-ink">
+          ${sLogo('vv', 'size-5 rounded-md')}<span>স্পনসর: <b class="font-semibold text-ink">Vimverse Lab</b></span>
+        </a>
+      </div>`;
+    if (kind === 'sponsor') return `
+      <a ${sAttrs('vv', place)} class="no-print group flex flex-col gap-4 rounded-card border border-line bg-brand-900 p-5 text-white shadow-card transition hover:bg-brand-800 sm:flex-row sm:items-center sm:p-6">
+        <div class="flex items-center gap-3.5 sm:contents">
+          ${sLogo('vv', 'size-14 p-1')}
+          <div class="min-w-0 flex-1">
+            <span class="chip bg-white/10 text-sun-400"><i data-lucide="heart-handshake" class="size-3.5"></i>এই অ্যাপের স্পনসর</span>
+            <h3 class="mt-1.5 text-lg font-bold leading-snug">Vimverse Lab — বাংলাদেশের সফটওয়্যার স্টুডিও</h3>
+            <p class="mt-1 text-[15px] leading-relaxed text-white/75">আপনার উদ্যোগের জন্য ওয়েবসাইট, মোবাইল অ্যাপ বা AI টুল দরকার? আইডিয়া থেকে Google Play পর্যন্ত, এক টিমে।</p>
+          </div>
+        </div>
+        <span class="btn h-11 shrink-0 bg-white px-5 text-brand-900 group-hover:bg-sun-400 max-sm:w-full">প্রজেক্ট নিয়ে কথা বলুন<i data-lucide="arrow-up-right"></i></span>
+      </a>`;
+    return '';
+  }
+
+  // Slim footer with sponsor credit, used on every page.
+  function footer(place) {
+    return `
+    <footer class="no-print border-t border-line bg-white">
+      <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <a ${sAttrs('vv', place + '-footer')} class="inline-flex items-center gap-2 hover:text-ink">
+          ${sLogo('vv', 'size-6 rounded-md')}<span>স্পনসর ও নির্মাতা: <b class="font-semibold text-ink">Vimverse Lab</b></span>
+        </a>
+        <a ${sAttrs('ov', place + '-footer')} class="inline-flex items-center gap-2 hover:text-ink">
+          ${sLogo('ov', 'size-6 rounded-md p-0.5')}<span>কেনাকাটা করুন <b class="font-semibold text-partner-600">Our Vimganj</b>-এ</span><i data-lucide="arrow-up-right" class="size-3.5"></i>
+        </a>
+      </div>
+      <p class="border-t border-line px-4 py-3 text-center text-xs text-muted/80">এটি একটি স্বাধীন ফরম পূরণ সহায়ক টুল, বাংলাদেশ ব্যাংকের অফিসিয়াল ওয়েবসাইট নয়। আপনার তথ্য কোনো সার্ভারে যায় না।</p>
+    </footer>`;
+  }
+
   // ---------- drawer (slide-in panel from the left, for phones/tablets) ----------
   function drawer(inner) {
     const el = document.createElement('div');
@@ -175,5 +250,5 @@
 
   window.addEventListener('store:error', () => toast('ব্রাউজারের স্টোরেজ পূর্ণ! ছবি ছোট করুন বা পুরোনো আবেদন মুছুন।', 'err'));
 
-  window.UI = { esc, icons, qs, header, drawer, toast, dialog, missingWarning, relTime, download };
+  window.UI = { esc, icons, qs, header, drawer, promo, footer, toast, dialog, missingWarning, relTime, download };
 })();

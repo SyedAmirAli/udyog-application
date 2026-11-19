@@ -1,6 +1,8 @@
 /* dashboard.html page script */
 (function () {
 document.getElementById('hdr').outerHTML = UI.header('dashboard');
+    document.getElementById('ftr').outerHTML = UI.footer('dashboard');
+    document.getElementById('promo').innerHTML = UI.promo('shop', 'dashboard-banner');
     const S = Schema, esc = UI.esc;
     let filter = 'all', query = '';
 

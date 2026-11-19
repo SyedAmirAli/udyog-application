@@ -1,6 +1,8 @@
 /* index.html page script */
 (function () {
 document.getElementById('hdr').outerHTML = UI.header('home');
+    document.getElementById('ftr').outerHTML = UI.footer('home');
+    document.getElementById('partners').innerHTML = UI.promo('shop', 'home-banner') + UI.promo('sponsor', 'home-sponsor');
     const S = Schema;
 
     // deadline countdown

@@ -31,6 +31,7 @@
       </div>
     </div>
     <nav data-steps class="card p-2" aria-label="ধাপসমূহ"></nav>
+    ${UI.promo('side', 'form-' + where)}
     ${where === 'drawer' ? `<button type="button" data-clear class="btn btn-danger h-11 w-full"><i data-lucide="eraser"></i>Clear All · সব তথ্য মুছুন</button>` : ''}
     <div class="rounded-card border border-brand-100 bg-brand-50/70 p-4 text-sm leading-relaxed text-brand-800">
       <div class="flex items-center gap-2 font-semibold"><i data-lucide="shield-check" class="size-4"></i>তথ্য নিরাপদ</div>
@@ -154,7 +155,8 @@
         <input data-k="e${n}_src" maxlength="40" list="dl-src" value="${val('e' + n + '_src')}" placeholder="উৎস, যেমন: ঋণ" aria-label="${esc(h)} — অর্থের উৎস" class="field-input py-2">
       </div>`;
     }).join('');
-    return `<div class="hidden grid-cols-[2.25rem_1fr_1.1fr_9rem_8.5rem] gap-3 border-b border-line pb-2 text-xs font-semibold uppercase tracking-wide text-muted md:grid">
+    return `<div class="mb-4">${UI.promo('shop-tip', 'form-expenses')}</div>
+      <div class="hidden grid-cols-[2.25rem_1fr_1.1fr_9rem_8.5rem] gap-3 border-b border-line pb-2 text-xs font-semibold uppercase tracking-wide text-muted md:grid">
         <span>ক্রম</span><span>ব্যয়ের খাত</span><span>বিবরণ</span><span>মোট (টাকা)</span><span>অর্থের উৎস</span></div>
       ${rows}<datalist id="dl-src">${S.FUND_SRC.map((o) => `<option value="${o}">`).join('')}</datalist>
       <div class="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-brand-800 px-4 py-3 text-white">

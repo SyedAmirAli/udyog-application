@@ -1,6 +1,8 @@
 /* preview.html page script */
 (function () {
 document.getElementById('hdr').outerHTML = UI.header('');
+    document.getElementById('ftr').outerHTML = UI.footer('preview');
+    document.getElementById('promo').innerHTML = UI.promo('side', 'preview');
     const S = Schema;
     const app = Store.get(UI.qs('id'));
     const sheet = document.getElementById('sheet'), root = document.getElementById('print-root');

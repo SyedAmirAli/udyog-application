@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.maateen.me; font-src 'self' data: https://fonts.gstatic.com https://fonts.maateen.me; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-src 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.maateen.me; font-src 'self' data: https://fonts.gstatic.com https://fonts.maateen.me; img-src 'self' data: blob: https://www.vimverselab.com https://ourvimganj.com; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-src 'none'">
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>উদ্যোগ (UDYOG) আবেদন সহায়ক</title>
@@ -80,6 +80,12 @@
       </div>
     </section>
 
+    <!-- Partner marketplace + sponsor (filled by js/pages/index.js) -->
+    <section class="mx-auto max-w-7xl px-4 pb-10 sm:px-6">
+      <h2 class="mb-4 text-xl font-bold text-brand-900 sm:text-2xl">উদ্যোক্তাদের জন্য সহায়ক</h2>
+      <div id="partners" class="grid gap-4 lg:grid-cols-2"></div>
+    </section>
+
     <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
       <div class="flex flex-col items-start gap-4 rounded-card border border-sun-400/40 bg-sun-400/10 p-6 sm:flex-row sm:items-center">
         <span class="grid size-11 shrink-0 place-items-center rounded-2xl bg-sun-400/25 text-sun-500"><i data-lucide="map" class="size-5.5"></i></span>
@@ -88,12 +94,7 @@
     </section>
   </main>
 
-  <footer class="border-t border-line bg-white">
-    <div class="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
-      <p>এটি একটি স্বাধীন ফরম পূরণ সহায়ক টুল, বাংলাদেশ ব্যাংকের অফিসিয়াল ওয়েবসাইট নয়।</p>
-      <p class="flex items-center gap-1.5"><i data-lucide="shield-check" class="size-4 text-brand-500"></i>আপনার তথ্য কোনো সার্ভারে যায় না</p>
-    </div>
-  </footer>
+  <div id="ftr"></div>
 
   <script src="js/store.js"></script>
   <script src="js/schema.js"></script>

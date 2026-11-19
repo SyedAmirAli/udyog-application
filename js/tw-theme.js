@@ -19,6 +19,11 @@ document.write(`<style type="text/tailwindcss">
   --color-sun-500: #f39c12;
   --color-berry-500: #e0312f;
 
+  /* partner (Our Vimganj / Vimverse Lab orange) */
+  --color-partner-50: #fff4ec;
+  --color-partner-500: #f26b1d;
+  --color-partner-600: #d4560d;
+
   --color-ink: #13201a;
   --color-muted: #5d6b64;
   --color-line: #e3e8e5;
