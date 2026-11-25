@@ -59,7 +59,9 @@
 
   // Field shape:
   // { id, num, label, sub, type, req, ph, help, opts, show(d), full, words, upper, digits, money, rows, list }
-  // types: text | textarea | select | radio | date | tel | email | number | money | photo | check | triple | addr
+  // types: text | textarea | select | radio | date | tel | email | number | money | photo | check | triple | addr | repeat
+  // repeat: { id, type: 'repeat', max, item, add, fields } — a list of 1..max items. Item 1 keeps the plain
+  // field ids (edu_exam); item N (N ≥ 2) is stored as `edu_exam__N`, the item count as `edu_count`.
   const STEPS = [
     {
       id: 'personal', title: 'ব্যক্তিগত তথ্য', part: 'পার্ট-১', icon: 'user-round',
@@ -80,9 +82,11 @@
           { id: 'spouse_nid', num: '০৭', label: 'স্বামী/স্ত্রীর জাতীয় পরিচয়পত্র নম্বর', type: 'tel', digits: true, show: isMarried },
         ] },
         { title: 'শিক্ষা ও যোগাযোগ', fields: [
-          { id: 'edu_exam', num: '০৮', label: 'শিক্ষাগত যোগ্যতা (সর্বশেষ পাসকৃত পরীক্ষা, বোর্ড/বিশ্ববিদ্যালয় ও সাল)', sub: 'সর্বশেষ পাসকৃত পরীক্ষা', ui: 'সর্বশেষ পাসকৃত পরীক্ষা', req: true, ph: 'যেমন: স্নাতক (সম্মান)', list: ['এসএসসি', 'দাখিল', 'এইচএসসি', 'আলিম', 'ডিপ্লোমা', 'স্নাতক', 'স্নাতক (সম্মান)', 'স্নাতকোত্তর', 'কামিল'] },
-          { id: 'edu_board', num: '০৮', label: 'বোর্ড/বিশ্ববিদ্যালয়', sub: 'বোর্ড/বিশ্ববিদ্যালয়', ph: 'যেমন: জাতীয় বিশ্ববিদ্যালয়' },
-          { id: 'edu_year', num: '০৮', label: 'পাসের সাল', sub: 'সাল', type: 'tel', digits: true, ph: 'যেমন: ২০২২' },
+          { id: 'edu', type: 'repeat', full: true, max: 5, item: 'শিক্ষাগত যোগ্যতা', add: 'আরেকটি শিক্ষাগত যোগ্যতা যোগ করুন', fields: [
+            { id: 'edu_exam', num: '০৮', label: 'শিক্ষাগত যোগ্যতা (সর্বশেষ পাসকৃত পরীক্ষা, বোর্ড/বিশ্ববিদ্যালয় ও সাল)', sub: 'সর্বশেষ পাসকৃত পরীক্ষা', ui: 'সর্বশেষ পাসকৃত পরীক্ষা', uiMore: 'পাসকৃত পরীক্ষা', req: true, ph: 'যেমন: স্নাতক (সম্মান)', list: ['এসএসসি', 'দাখিল', 'এইচএসসি', 'আলিম', 'ডিপ্লোমা', 'স্নাতক', 'স্নাতক (সম্মান)', 'স্নাতকোত্তর', 'কামিল'] },
+            { id: 'edu_board', num: '০৮', label: 'বোর্ড/বিশ্ববিদ্যালয়', sub: 'বোর্ড/বিশ্ববিদ্যালয়', ph: 'যেমন: জাতীয় বিশ্ববিদ্যালয়' },
+            { id: 'edu_year', num: '০৮', label: 'পাসের সাল', sub: 'সাল', type: 'tel', digits: true, ph: 'যেমন: ২০২২' },
+          ] },
           { id: 'phone', num: '০৯', label: 'ফোন নম্বর / বিকল্প ফোন নম্বর', sub: 'ফোন নম্বর', ui: 'ফোন নম্বর', req: true, type: 'tel', digits: true, ph: '০১XXXXXXXXX' },
           { id: 'phone_alt', num: '০৯', label: 'বিকল্প ফোন নম্বর', sub: 'বিকল্প ফোন নম্বর', type: 'tel', digits: true },
           { id: 'email', num: '১০', label: 'ই-মেইল আইডি', req: true, type: 'email', ph: 'name@example.com' },
@@ -98,10 +102,12 @@
           { id: 'experience', num: '১২', label: 'ব্যবসা/চাকরির অভিজ্ঞতা থাকলে তার বিবরণ', type: 'textarea', rows: 4, full: true },
         ] },
         { title: 'ব্যাংক হিসাব (থাকলে)', fields: [
-          { id: 'bank_name', num: '১৩', label: 'ব্যাংকের নাম', sub: 'ব্যাংকের নাম' },
-          { id: 'bank_branch', num: '১৩', label: 'শাখা', sub: 'শাখা' },
-          { id: 'bank_acc_type', num: '১৩', label: 'হিসাবের ধরণ', sub: 'হিসাবের ধরণ', type: 'select', opts: ACC_TYPE },
-          { id: 'bank_acc_no', num: '১৩', label: 'হিসাব নম্বর', sub: 'হিসাব নম্বর', type: 'tel', digits: true },
+          { id: 'bank', type: 'repeat', full: true, max: 5, item: 'ব্যাংক হিসাব', add: 'আরেকটি ব্যাংক হিসাব যোগ করুন', fields: [
+            { id: 'bank_name', num: '১৩', label: 'ব্যাংকের নাম', sub: 'ব্যাংকের নাম' },
+            { id: 'bank_branch', num: '১৩', label: 'শাখা', sub: 'শাখা' },
+            { id: 'bank_acc_type', num: '১৩', label: 'হিসাবের ধরণ', sub: 'হিসাবের ধরণ', type: 'select', opts: ACC_TYPE },
+            { id: 'bank_acc_no', num: '১৩', label: 'হিসাব নম্বর', sub: 'হিসাব নম্বর', type: 'tel', digits: true },
+          ] },
         ] },
         { title: 'বিদ্যমান ঋণ', fields: [
           { id: 'loan_has', num: '১৪', label: 'কোনো ব্যাংক/আর্থিক প্রতিষ্ঠানে বিদ্যমান ঋণ আছে কিনা', req: true, type: 'radio', opts: YES_NO, full: true },
@@ -237,7 +243,40 @@
   };
   // per-row example descriptions for the expense table (index 1–12)
   const EXPENSE_EX = ['যেমন: দুধ দোহন যন্ত্র', 'যেমন: গাভী ক্রয় (৫টি)', 'যেমন: খাদ্য ও ওষুধ (৩ মাস)', 'যেমন: নমুনা পণ্য তৈরি', 'যেমন: লেবেল ছাপা', 'যেমন: ট্রেড লাইসেন্স', 'যেমন: ফেসবুক বিজ্ঞাপন', 'যেমন: ২ জন কর্মী (৩ মাস)', 'যেমন: ভ্যান ভাড়া', 'যেমন: স্মার্টফোন ও ইন্টারনেট', 'যেমন: খামার ব্যবস্থাপনা কোর্স', 'যেমন: শেড নির্মাণ'];
-  STEPS.forEach((s) => s.groups.forEach((g) => g.fields.forEach((f) => { if (!f.ph && EXAMPLES[f.id]) f.ph = EXAMPLES[f.id]; })));
+  // repeat blocks are flattened to their item fields
+  const flat = (fields) => fields.flatMap((f) => (f.type === 'repeat' ? f.fields : [f]));
+  STEPS.forEach((s) => s.groups.forEach((g) => flat(g.fields).forEach((f) => { if (!f.ph && EXAMPLES[f.id]) f.ph = EXAMPLES[f.id]; })));
+
+  // ---------- repeatable lists ----------
+  const REPEATS = {};
+  STEPS.forEach((s) => s.groups.forEach((g) => g.fields.forEach((f) => { if (f.type === 'repeat') REPEATS[f.id] = f; })));
+  const rkey = (id, i) => (i ? `${id}__${i + 1}` : id);
+  const baseKey = (k) => String(k).split('__')[0];
+  const repeatCount = (d, id) => {
+    const f = REPEATS[id];
+    return Math.min(Math.max(parseInt(d[id + '_count'], 10) || 1, 1), f.max || 5);
+  };
+  // Filled items only, each as { edu_exam, edu_board, edu_year } (plain field ids).
+  function repeatItems(d, id) {
+    const f = REPEATS[id], out = [];
+    for (let i = 0; i < repeatCount(d, id); i++) {
+      const o = {};
+      f.fields.forEach((x) => (o[x.id] = String(d[rkey(x.id, i)] ?? '').trim()));
+      if (Object.values(o).some(Boolean)) out.push(o);
+    }
+    return out;
+  }
+  // Remove item i and shift the following items up.
+  function repeatRemove(d, id, i) {
+    const f = REPEATS[id], n = repeatCount(d, id);
+    if (n <= 1) { f.fields.forEach((x) => delete d[x.id]); return; }
+    for (let j = i; j < n - 1; j++) f.fields.forEach((x) => {
+      const from = d[rkey(x.id, j + 1)];
+      if (from === undefined) delete d[rkey(x.id, j)]; else d[rkey(x.id, j)] = from;
+    });
+    f.fields.forEach((x) => delete d[rkey(x.id, n - 1)]);
+    d[id + '_count'] = String(n - 1);
+  }
 
   function addrFields(p, num, title) {
     const show = p === 'per' ? (d) => !d.per_same : undefined;
@@ -268,7 +307,7 @@
 
   function allFields() {
     const out = [];
-    STEPS.forEach((s, si) => s.groups.forEach((g) => g.fields.forEach((f) => out.push({ ...f, step: si, groupShow: g.show }))));
+    STEPS.forEach((s, si) => s.groups.forEach((g) => flat(g.fields).forEach((f) => out.push({ ...f, step: si, groupShow: g.show }))));
     return out;
   }
 
@@ -308,6 +347,7 @@
   window.Schema = {
     STEPS, EXPENSE_HEADS, EXPENSE_EX, FUND_SRC, DEADLINE,
     toBn, toEn, parseNum, money, groupBD, ageAt, fmtDate, countWords,
+    REPEATS, rkey, baseKey, repeatCount, repeatItems, repeatRemove,
     getVal, expensesTotal, allFields, missing, progress, stepProgress, visible, isEmpty,
   };
 })();

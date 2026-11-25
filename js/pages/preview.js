@@ -50,12 +50,18 @@ document.getElementById('hdr').outerHTML = UI.header('');
       FormPrint.render(sheet, d).then(applyZoom);
       applyZoom();
 
+      const fileName = () => `UDYOG-Application-${(d.name_en || d.name_bn || 'application').trim().replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, '-')}`;
+      document.getElementById('btn-word').addEventListener('click', async () => {
+        const r = await UI.missingWarning(app);
+        if (r !== 'print') return;
+        try { await FormDocx.download(d, fileName()); UI.toast('Word ফাইল ডাউনলোড হয়েছে'); }
+        catch (e) { console.error(e); UI.toast('Word ফাইল তৈরি করা যায়নি', 'err'); }
+      });
       document.getElementById('btn-print').addEventListener('click', async () => {
         const r = await UI.missingWarning(app);
         if (r !== 'print') return;
         const prev = document.title;
-        const nm = (d.name_en || d.name_bn || 'application').trim().replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, '-');
-        document.title = `UDYOG-Application-${nm}`;
+        document.title = fileName();
         await document.fonts.ready;
         window.print();
         setTimeout(() => (document.title = prev), 500);

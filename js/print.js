@@ -21,13 +21,22 @@
       const age = a ? `বয়স: ${S.toBn(a.years)} বছর ${S.toBn(a.months)} মাস ${S.toBn(a.days)} দিন` : '';
       return join([S.fmtDate(d.dob), age], '; ');
     },
-    edu: (d) => join([v(d, 'edu_exam'), v(d, 'edu_board'), bnNum(v(d, 'edu_year'))], ', '),
+    // one line per qualification
+    edu: (d) => S.repeatItems(d, 'edu').map((o) => join([o.edu_exam, o.edu_board, bnNum(o.edu_year)], ', ')).join('\n'),
     phone: (d) => join([bnNum(v(d, 'phone')), bnNum(v(d, 'phone_alt'))], ' / '),
+    // one account: the original 3-line layout; several accounts: one numbered line each
     bank(d) {
-      const l1 = join([v(d, 'bank_name') && 'ব্যাংকের নাম: ' + v(d, 'bank_name'), v(d, 'bank_branch') && 'শাখা: ' + v(d, 'bank_branch')], ', ');
-      const l2 = v(d, 'bank_acc_type') && 'হিসাবের ধরণ: ' + v(d, 'bank_acc_type');
-      const l3 = v(d, 'bank_acc_no') && 'হিসাব নম্বর: ' + bnNum(v(d, 'bank_acc_no'));
-      return join([l1, l2, l3], '\n');
+      const items = S.repeatItems(d, 'bank');
+      if (items.length <= 1) {
+        const o = items[0] || {};
+        const l1 = join([o.bank_name && 'ব্যাংকের নাম: ' + o.bank_name, o.bank_branch && 'শাখা: ' + o.bank_branch], ', ');
+        const l2 = o.bank_acc_type && 'হিসাবের ধরণ: ' + o.bank_acc_type;
+        const l3 = o.bank_acc_no && 'হিসাব নম্বর: ' + bnNum(o.bank_acc_no);
+        return join([l1, l2, l3], '\n');
+      }
+      return items.map((o, i) => `${bnNum(i + 1)}. ` + join([
+        o.bank_name, o.bank_branch && 'শাখা: ' + o.bank_branch, o.bank_acc_type && 'ধরণ: ' + o.bank_acc_type,
+        o.bank_acc_no && 'হিসাব নং: ' + bnNum(o.bank_acc_no)], ', ')).join('\n');
     },
     yesDetail: (d, yn, det) => (v(d, yn) ? join([v(d, yn), d[yn] === 'হ্যাঁ' ? v(d, det) : ''], '; ') : ''),
     type: (d, t, desc) => join([v(d, t), v(d, desc)], ' — '),
@@ -179,5 +188,5 @@
     fit(container);
   }
 
-  window.FormPrint = { render, fit, SLOTS, PAGE_W, PAGE_H };
+  window.FormPrint = { render, fit, SLOTS, PAGE_W, PAGE_H, F };
 })();
