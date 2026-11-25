@@ -135,6 +135,8 @@
           <div id="photo-box" class="grid h-28 w-24 shrink-0 place-items-center overflow-hidden rounded-xl border-2 border-dashed border-line bg-canvas text-muted">${data.photo ? `<img src="${esc(data.photo)}" class="size-full object-cover">` : '<i data-lucide="image-plus" class="size-7"></i>'}</div>
           <div class="space-y-2"><label class="btn btn-outline cursor-pointer"><i data-lucide="upload"></i>ছবি বাছাই করুন<input type="file" accept="image/*" id="photo-input" class="sr-only"></label>
           <button type="button" id="photo-remove" class="btn btn-ghost ${data.photo ? '' : 'hidden'}"><i data-lucide="x"></i>সরান</button></div></div>${help(f)}`);
+      case 'repeat':
+        return wrap(repeatBlock(f));
       case 'expenses':
         return wrap(expensesTable());
       case 'declare':
@@ -142,6 +144,23 @@
       default:
         return wrap(`${lbl(f, 'f-' + f.id)}${input(f)}${help(f)}${err(f)}`);
     }
+  }
+
+  // Repeatable list (education, bank accounts): item 1 uses the plain ids, item N uses `id__N`.
+  function repeatBlock(f) {
+    const n = S.repeatCount(data, f.id), max = f.max || 5;
+    const itemField = (x, i) => ({ ...x, id: S.rkey(x.id, i), req: i === 0 && x.req, ui: i && x.uiMore ? x.uiMore : x.ui });
+    const items = Array.from({ length: n }, (_, i) => `
+      <div data-rep-item="${f.id}-${i}" class="${n > 1 ? 'rounded-2xl border border-line bg-canvas/50 p-3.5 sm:p-4' : ''}">
+        ${n > 1 ? `<div class="mb-3 flex items-center justify-between gap-2">
+          <span class="chip bg-brand-100 text-brand-800">${esc(f.item)} ${S.toBn(i + 1)}</span>
+          <button type="button" data-rep-del="${f.id}" data-i="${i}" class="btn btn-ghost h-8 px-2.5 hover:text-berry-500" aria-label="${esc(f.item)} ${S.toBn(i + 1)} সরান"><i data-lucide="trash-2"></i>সরান</button></div>` : ''}
+        <div class="grid gap-x-5 gap-y-4 sm:gap-y-5 md:grid-cols-2">${f.fields.map((x) => field(itemField(x, i))).join('')}</div>
+      </div>`).join('');
+    const add = n < max
+      ? `<button type="button" data-rep-add="${f.id}" class="btn btn-outline h-11 w-full border-dashed text-brand-700 sm:w-auto"><i data-lucide="plus"></i>${esc(f.add)}</button>`
+      : `<p class="text-sm text-muted">সর্বোচ্চ ${S.toBn(max)}টি যোগ করা যাবে।</p>`;
+    return `<div class="space-y-3">${items}<div class="flex flex-wrap items-center gap-x-3 gap-y-1">${add}${n > 1 ? `<span class="text-xs text-muted">সবগুলো প্রিভিউ, PDF ও Word ফাইলে আসবে</span>` : ''}</div></div>`;
   }
 
   function expensesTable() {
@@ -304,11 +323,12 @@
     p2_idea: (v) => (S.countWords(v) > 200 ? '২০০ শব্দের বেশি হয়ে গেছে' : ''),
   };
   function validate(k, show) {
-    const f = S.allFields().find((x) => x.id === k);
+    const base = S.baseKey(k); // extra repeat items (edu_year__2) share the rules of item 1
+    const f = S.allFields().find((x) => x.id === base);
     const box = document.querySelector(`[data-err="${k}"]`);
     if (!f || !box) return;
-    let msg = RULES[k] ? RULES[k](data[k]) : '';
-    if (!msg && f.req && show && S.visible(data, f) && S.isEmpty(data, f)) msg = 'এই ঘরটি পূরণ করা প্রয়োজন';
+    let msg = RULES[base] ? RULES[base](data[k]) : '';
+    if (!msg && f.req && k === base && show && S.visible(data, f) && S.isEmpty(data, f)) msg = 'এই ঘরটি পূরণ করা প্রয়োজন';
     box.innerHTML = msg ? `<i data-lucide="circle-alert" class="size-3.5"></i>${msg}` : '';
     box.classList.toggle('hidden', !msg);
     box.classList.toggle('flex', !!msg);
@@ -400,7 +420,27 @@
     } catch (err) { UI.toast('ছবিটি পড়া যায়নি', 'err'); }
     e.target.value = '';
   });
-  form.addEventListener('click', (e) => {
+  form.addEventListener('click', async (e) => {
+    const addBtn = e.target.closest('[data-rep-add]'), delBtn = e.target.closest('[data-rep-del]');
+    if ((addBtn || delBtn) && BLOCK_SYNTHETIC_INPUT && !e.isTrusted) return;
+    if (addBtn) {
+      const id = addBtn.dataset.repAdd, f = S.REPEATS[id], n = S.repeatCount(data, id);
+      if (n >= (f.max || 5)) return;
+      data[id + '_count'] = String(n + 1);
+      persist(); renderStep();
+      const first = document.querySelector(`[data-k="${S.rkey(f.fields[0].id, n)}"]`);
+      if (first) { first.scrollIntoView({ behavior: 'smooth', block: 'center' }); first.focus({ preventScroll: true }); }
+      return;
+    }
+    if (delBtn) {
+      const id = delBtn.dataset.repDel, i = +delBtn.dataset.i, f = S.REPEATS[id];
+      const filled = f.fields.some((x) => String(data[S.rkey(x.id, i)] ?? '').trim());
+      if (filled && !(await UI.dialog({ title: `${f.item} ${S.toBn(i + 1)} সরাবেন?`, icon: 'trash-2', tone: 'danger', ok: 'হ্যাঁ, সরান',
+        body: 'এই অংশে লেখা তথ্য মুছে যাবে।' }))) return;
+      S.repeatRemove(data, id, i);
+      persist(); renderStep();
+      return;
+    }
     if (e.target.closest('#photo-remove')) {
       delete data.photo; persist();
       document.getElementById('photo-box').innerHTML = '<i data-lucide="image-plus" class="size-7"></i>';
