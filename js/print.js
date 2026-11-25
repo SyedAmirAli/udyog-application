@@ -27,16 +27,20 @@
     // one account: the original 3-line layout; several accounts: one numbered line each
     bank(d) {
       const items = S.repeatItems(d, 'bank');
+      // blank fields are left out
       if (items.length <= 1) {
         const o = items[0] || {};
-        const l1 = join([o.bank_name && 'ব্যাংকের নাম: ' + o.bank_name, o.bank_branch && 'শাখা: ' + o.bank_branch], ', ');
-        const l2 = o.bank_acc_type && 'হিসাবের ধরণ: ' + o.bank_acc_type;
-        const l3 = o.bank_acc_no && 'হিসাব নম্বর: ' + bnNum(o.bank_acc_no);
-        return join([l1, l2, l3], '\n');
+        return join([
+          o.bank_holder && 'হিসাবধারীর নাম: ' + o.bank_holder,
+          join([o.bank_name && 'ব্যাংকের নাম: ' + o.bank_name, o.bank_branch && 'শাখা: ' + o.bank_branch], ', '),
+          o.bank_acc_type && 'হিসাবের ধরণ: ' + o.bank_acc_type,
+          join([o.bank_acc_no && 'হিসাব নম্বর: ' + bnNum(o.bank_acc_no), o.bank_routing && 'রাউটিং নম্বর: ' + bnNum(o.bank_routing)], ', '),
+        ], '\n');
       }
       return items.map((o, i) => `${bnNum(i + 1)}. ` + join([
-        o.bank_name, o.bank_branch && 'শাখা: ' + o.bank_branch, o.bank_acc_type && 'ধরণ: ' + o.bank_acc_type,
-        o.bank_acc_no && 'হিসাব নং: ' + bnNum(o.bank_acc_no)], ', ')).join('\n');
+        o.bank_holder && 'হিসাবধারী: ' + o.bank_holder, o.bank_name, o.bank_branch && 'শাখা: ' + o.bank_branch,
+        o.bank_acc_type && 'ধরণ: ' + o.bank_acc_type, o.bank_acc_no && 'হিসাব নং: ' + bnNum(o.bank_acc_no),
+        o.bank_routing && 'রাউটিং: ' + bnNum(o.bank_routing)], ', ')).join('\n');
     },
     yesDetail: (d, yn, det) => (v(d, yn) ? join([v(d, yn), d[yn] === 'হ্যাঁ' ? v(d, det) : ''], '; ') : ''),
     type: (d, t, desc) => join([v(d, t), v(d, desc)], ' — '),
