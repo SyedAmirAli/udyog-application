@@ -319,6 +319,7 @@
     phone: (v) => (v && !/^01[3-9]\d{8}$/.test(S.toEn(v).replace(/[\s-]/g, '').replace(/^\+?88/, '')) ? 'সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন (০১XXXXXXXXX)' : ''),
     phone_alt: (v) => RULES.phone(v),
     email: (v) => (v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? 'সঠিক ই-মেইল ঠিকানা দিন' : ''),
+    bank_routing: (v) => (v && S.toEn(v).replace(/\D/g, '').length !== 9 ? 'রাউটিং নম্বর ৯ সংখ্যার হয়' : ''),
     edu_year: (v) => (v && !/^(19|20)\d{2}$/.test(S.toEn(v)) ? 'চার সংখ্যার সাল দিন' : ''),
     p2_idea: (v) => (S.countWords(v) > 200 ? '২০০ শব্দের বেশি হয়ে গেছে' : ''),
   };
